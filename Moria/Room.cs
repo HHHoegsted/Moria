@@ -13,6 +13,11 @@ namespace Moria
         int amountOfGold;
         string Item;
 
+        private Room neighbourNorth;
+        private Room neighbourSouth;
+        private Room neighbourEast;
+        private Room neighbourWest;
+
         public Room(string aLocation)
         {
             location = aLocation;
