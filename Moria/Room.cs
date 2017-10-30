@@ -9,6 +9,9 @@ namespace Moria
     class Room
     {
         public string location;
+        public string description;
+        int amountOfGold;
+        string Item;
 
         public Room(string aLocation)
         {
