@@ -22,5 +22,27 @@ namespace Moria
         {
             location = aLocation;
         }
+
+        public int AmountOfGold { get => amountOfGold; private set => amountOfGold = value; }
+
+        public void setNeighbour(string direction, string aLocation)
+        {
+            switch (direction)
+            {
+                case "north":
+                    neighbourNorth.location = aLocation;
+                    break;
+                case "south":
+                    neighbourSouth.location = aLocation;
+                    break;
+                case "east":
+                    neighbourEast.location = aLocation;
+                    break;
+                case "west":
+                    neighbourWest.location = aLocation;
+                    break;
+            }
+
+        }
     }
 }
