@@ -18,6 +18,12 @@ namespace Moria
         {
             Console.WriteLine("The Game has begun!");
             InstantiateObjects();
+            CreateRelations();
+        }
+
+        private void CreateRelations()
+        {
+            
         }
 
         public void InstantiateObjects()

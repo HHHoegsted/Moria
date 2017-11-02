@@ -8,7 +8,7 @@ namespace Moria
 {
     class Item
     {
-        public string name { get; set; };
+        public string name;
 
         public Item(string aName)
         {

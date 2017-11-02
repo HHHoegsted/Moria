@@ -11,6 +11,7 @@ namespace Moria
         static void Main(string[] args)
         {
             GameEngine game = new GameEngine();
+            game.StartGame();
         }
     }
 }

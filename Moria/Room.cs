@@ -10,6 +10,8 @@ namespace Moria
     {
         public string location;
         public string description;
+        public Room neighbourRight;
+        public Room neighbourLeft;
 
         public Room(string aName, string aDescription)
         {
