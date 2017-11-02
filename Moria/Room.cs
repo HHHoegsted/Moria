@@ -18,5 +18,10 @@ namespace Moria
             location = aName;
             description = aDescription;
         }
+
+        public void ShowDescription()
+        {
+            Console.WriteLine(this.description);
+        }
     }
 }
