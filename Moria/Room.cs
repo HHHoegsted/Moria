@@ -10,39 +10,11 @@ namespace Moria
     {
         public string location;
         public string description;
-        int amountOfGold;
-        string Item;
 
-        private Room neighbourNorth;
-        private Room neighbourSouth;
-        private Room neighbourEast;
-        private Room neighbourWest;
-
-        public Room(string aLocation)
+        public Room(string aName, string aDescription)
         {
-            location = aLocation;
-        }
-
-        public int AmountOfGold { get => amountOfGold; private set => amountOfGold = value; }
-
-        public void setNeighbour(string direction, string aLocation)
-        {
-            switch (direction)
-            {
-                case "north":
-                    neighbourNorth.location = aLocation;
-                    break;
-                case "south":
-                    neighbourSouth.location = aLocation;
-                    break;
-                case "east":
-                    neighbourEast.location = aLocation;
-                    break;
-                case "west":
-                    neighbourWest.location = aLocation;
-                    break;
-            }
-
+            location = aName;
+            description = aDescription;
         }
     }
 }

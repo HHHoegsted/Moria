@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Moria
 {
-    class Program
+    class Item
     {
-        static void Main(string[] args)
+        public string name { get; set; };
+
+        public Item(string aName)
         {
-            GameEngine game = new GameEngine();
+            name = aName;
         }
     }
 }
