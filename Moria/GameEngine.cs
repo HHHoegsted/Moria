@@ -98,7 +98,7 @@ namespace Moria
                 }
                 else if (command.Equals("help"))
                 {
-                    Console.WriteLine("R for Right \nL for Left \nSearch to search the room \nFight to fight \nQuit to quit the game");
+                    Console.WriteLine(Text.HelpText);
                 }
                 else if (command.Equals("quit"))
                 {
@@ -124,7 +124,7 @@ namespace Moria
                     if (troll.life <= 0)
                     {
                         Console.WriteLine("You are victorious and the troll is dead");
-                        currentRoom.status = "";
+                        currentRoom.status = "treasure";
                         leftLeftRoom.description = "The far left room, there is a dead troll on the floor";
                     }
                     
@@ -143,6 +143,10 @@ namespace Moria
                             Console.WriteLine("You picked up {0}", currentRoom.item.name);
                             currentRoom.item = null;
                         }
+                    }
+                    else if (currentRoom.status == "treasure")
+                    {
+                        Console.WriteLine("You have found the treasure!");
                     }
                     else
                     {
@@ -200,15 +204,15 @@ namespace Moria
             troll = new Mob("Troll", 50);
             item1 = new Item("a key");
             item2 = new Item("a health potion");
-            middleRoom = new Room("Middle", "Starting Room\nThere are exits to the left and right");
+            middleRoom = new Room("Middle", Text.MiddleRoomDescription);
             middleRoom.item = item1;
-            leftRoom = new Room("Left", "Left Room\nThere are exits to the left and right\nThe left door is locked");
+            leftRoom = new Room("Left", Text.LeftRoomDescription);
             leftRoom.item = item2;
             leftRoom.status = "LockedLeft";
-            rightRoom = new Room("Right", "Right Room\nThere are exits to the left and right");
-            leftLeftRoom = new Room("Far Left", "There is an exit to the right\nBehind the locked door is a troll, and it attacks you!");
+            rightRoom = new Room("Right", Text.RightRoomDescription);
+            leftLeftRoom = new Room("Far Left", Text.LeftLeftRoomDescription);
             leftLeftRoom.status = "mob";
-            rightRightRoom = new Room("Far Right", "There is an exit to the left\nYou stumble upon a trap");
+            rightRightRoom = new Room("Far Right", Text.RightRightRoomDescription);
             rightRightRoom.status = "trap";
 
         }
