@@ -11,6 +11,7 @@ namespace Moria
         public Player player1;
         public Mob troll;
         public Item item1;
+        public Item item2;
         public Room currentRoom;
         public Room middleRoom;
         public Room leftRoom;
@@ -22,6 +23,7 @@ namespace Moria
         public void StartGame()
         {
             Console.WriteLine("The Game has begun!");
+            Console.WriteLine("Type help to see the commands");
             InstantiateObjects();
             CreateRelations();
             currentRoom = middleRoom;
@@ -37,7 +39,6 @@ namespace Moria
             while (true)
             {
                 Console.WriteLine("What do you want to do?");
-                Console.WriteLine("Player health is {0}", player1.life);
                 command = Console.ReadLine().ToLower();
 
                 if (command.Equals("r"))
@@ -140,6 +141,7 @@ namespace Moria
                         {
                             currentRoom.collectedItem = true;
                             Console.WriteLine("You picked up {0}", currentRoom.item.name);
+                            currentRoom.item = null;
                         }
                     }
                     else
@@ -161,7 +163,20 @@ namespace Moria
                         Console.WriteLine("The game is over");
                         break;
                     }
+                    currentRoom.status = "";
+                }
 
+                if (leftRoom.collectedItem && player1.life < 100)
+                {
+                    Console.WriteLine("You have lost health and you have a health potion");
+                    Console.WriteLine("Do you wish to use it?");
+                    string answer = Console.ReadLine().ToLower();
+                    if (answer == "yes")
+                    {
+                        player1.life = 100;
+                        leftRoom.collectedItem = false;
+                    }
+                    
                 }
             }
         }
@@ -184,14 +199,16 @@ namespace Moria
             player1 = new Player("HH", 100);
             troll = new Mob("Troll", 50);
             item1 = new Item("a key");
-            middleRoom = new Room("Middle", "Starting Room");
+            item2 = new Item("a health potion");
+            middleRoom = new Room("Middle", "Starting Room\nThere are exits to the left and right");
             middleRoom.item = item1;
-            leftRoom = new Room("Left", "Left Room, the door to the left is locked");
+            leftRoom = new Room("Left", "Left Room\nThere are exits to the left and right\nThe left door is locked");
+            leftRoom.item = item2;
             leftRoom.status = "LockedLeft";
-            rightRoom = new Room("Right", "Right Room");
-            leftLeftRoom = new Room("Far Left", "Behind the locked door is a troll, and it attacks you!");
+            rightRoom = new Room("Right", "Right Room\nThere are exits to the left and right");
+            leftLeftRoom = new Room("Far Left", "There is an exit to the right\nBehind the locked door is a troll, and it attacks you!");
             leftLeftRoom.status = "mob";
-            rightRightRoom = new Room("Far Right", "You stumble upon a trap");
+            rightRightRoom = new Room("Far Right", "There is an exit to the left\nYou stumble upon a trap");
             rightRightRoom.status = "trap";
 
         }
