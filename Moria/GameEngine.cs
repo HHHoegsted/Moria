@@ -74,7 +74,7 @@ namespace Moria
                         {
                             Console.WriteLine("You have a key");
                             currentRoom.status = "";
-                            currentRoom.description = "Left room";
+                            currentRoom.description = "Left room, the door to the left is unlocked.";
                             currentRoom = currentRoom.neighbourLeft;
                             currentRoom.ShowDescription();
                         }
@@ -93,7 +93,7 @@ namespace Moria
                 }
                 else if (command.Equals("help"))
                 {
-                    Console.WriteLine("R for Right \nL for Left \nSearch to search the room \nQuit to quit the game");
+                    Console.WriteLine("R for Right \nL for Left \nSearch to search the room \nFight to fight \nQuit to quit the game");
                 }
                 else if (command.Equals("quit"))
                 {
