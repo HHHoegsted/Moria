@@ -12,6 +12,8 @@ namespace Moria
         {
             GameEngine game = new GameEngine();
             game.StartGame();
+            Console.WriteLine("\n\nThe game has ended. Thank you for playing");
+            Console.ReadKey();
         }
     }
 }

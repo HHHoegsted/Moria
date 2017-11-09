@@ -16,6 +16,8 @@ namespace Moria
         public Room leftRoom;
         public Room rightRoom;
         public Room leftLeftRoom;
+        public Room rightRightRoom;
+
 
         public void StartGame()
         {
@@ -35,11 +37,13 @@ namespace Moria
             while (true)
             {
                 Console.WriteLine("What do you want to do?");
+                Console.WriteLine("Player health is {0}", player1.life);
                 command = Console.ReadLine().ToLower();
 
                 if (command.Equals("r"))
                 {
                     //GO RIGHT!!
+                    
                     if (currentRoom.status == "LockedRight" && currentRoom.neighbourRight != null)
                     {
                         Console.WriteLine("The next door is locked");
@@ -109,14 +113,14 @@ namespace Moria
                         Console.WriteLine("your health is {0} and the trolls' health is {1}", player1.life, troll.life);
                     }
 
-                    if (player1.life < 0)
+                    if (player1.life <= 0)
                     {
                         Console.WriteLine("You are dead, game is over");
                         Console.ReadKey();
                         break;
                     }
 
-                    if (troll.life < 0)
+                    if (troll.life <= 0)
                     {
                         Console.WriteLine("You are victorious and the troll is dead");
                         currentRoom.status = "";
@@ -147,6 +151,18 @@ namespace Moria
                 {
                     Console.WriteLine("I don't understand!");
                 }
+
+                if (currentRoom.status == "trap")
+                {
+                    player1.life -= 80;
+                    if (player1.life <= 0)
+                    {
+                        Console.WriteLine("You have died from the trap");
+                        Console.WriteLine("The game is over");
+                        break;
+                    }
+
+                }
             }
         }
 
@@ -157,7 +173,9 @@ namespace Moria
             leftRoom.neighbourRight = middleRoom;
             leftRoom.neighbourLeft = leftLeftRoom;
             rightRoom.neighbourLeft = middleRoom;
+            rightRoom.neighbourRight = rightRightRoom;
             leftLeftRoom.neighbourRight = leftRoom;
+            rightRightRoom.neighbourLeft = rightRoom;
 
         }
 
@@ -173,6 +191,8 @@ namespace Moria
             rightRoom = new Room("Right", "Right Room");
             leftLeftRoom = new Room("Far Left", "Behind the locked door is a troll, and it attacks you!");
             leftLeftRoom.status = "mob";
+            rightRightRoom = new Room("Far Right", "You stumble upon a trap");
+            rightRightRoom.status = "trap";
 
         }
     }
