@@ -10,23 +10,26 @@ namespace Moria
     {
         public Player player1;
         public Mob troll;
-        public Item item1;
-        public Item item2;
+        public Item key;
+        public Item healthPotion;
         public Room currentRoom;
-        public Room middleRoom;
-        public Room leftRoom;
-        public Room rightRoom;
-        public Room leftLeftRoom;
-        public Room rightRightRoom;
+        public Room startingRoom;
+        public Room potionRoom;
+        public Room bedRoom;
+        public Room mobRoom;
+        public Room trapRoom;
 
 
         public void StartGame()
         {
-            Console.WriteLine("The Game has begun!");
+            string name;
+            Console.WriteLine(Text.Splash);
             Console.WriteLine("Type help to see the commands");
-            InstantiateObjects();
+            Console.WriteLine("What is your name, traveller?");
+            name = Console.ReadLine();
+            InstantiateObjects(name);
             CreateRelations();
-            currentRoom = middleRoom;
+            currentRoom = startingRoom;
             startGameLoop();
         }
 
@@ -41,19 +44,17 @@ namespace Moria
                 Console.WriteLine("What do you want to do?");
                 command = Console.ReadLine().ToLower();
 
-                if (command.Equals("r"))
-                {
-                    //GO RIGHT!!
-                    
-                    if (currentRoom.status == "LockedRight" && currentRoom.neighbourRight != null)
+                // Going east
+                if (command.Equals("e"))
+                {                    
+                    if (currentRoom.status == "LockedEast" && currentRoom.neighbourEast != null)
                     {
                         Console.WriteLine("The next door is locked");
-                        if (middleRoom.collectedItem)
+                        if (player1.HasItem(key))
                         {
                             Console.WriteLine("You have a key");
                             currentRoom.status = "";
-                            currentRoom = currentRoom.neighbourRight;
-                            currentRoom.ShowDescription();
+                            changeRoom(currentRoom.neighbourEast);
                         }
                         
                     }
@@ -61,49 +62,44 @@ namespace Moria
                     {
                         Console.WriteLine("you can't leave, a mob is fighting you!");
                     }
-                    else if (currentRoom.neighbourRight != null)
+                    else if (currentRoom.neighbourEast != null)
                     {
-                        currentRoom = currentRoom.neighbourRight;
-                        currentRoom.ShowDescription();
+                        changeRoom(currentRoom.neighbourEast);
                     }
                     else
-                        Console.WriteLine("No rooms to the right!");
+                        Console.WriteLine("No rooms to the east!");
                 }
-                else if (command.Equals("l"))
+                // Going west
+                else if (command.Equals("w"))
                 {
-                    //GO LEFT!!
-                    if (currentRoom.status == "LockedLeft" && currentRoom.neighbourLeft != null)
+                    if (currentRoom.status == "LockedWest" && currentRoom.neighbourWest != null)
                     {
                         Console.WriteLine("The next door is locked");
-                        if (middleRoom.collectedItem)
+                        if (player1.HasItem(key))
                         {
                             Console.WriteLine("You have a key");
                             currentRoom.status = "";
-                            currentRoom.description = "Left room, the door to the left is unlocked.";
-                            currentRoom = currentRoom.neighbourLeft;
-                            currentRoom.ShowDescription();
+                            currentRoom.description = "You are standing in a room with a table and a door, which you have unlocked";
+                            changeRoom(currentRoom.neighbourWest);
                         }
                     }
                     else if (currentRoom.status == "mob")
                     {
                         Console.WriteLine("You can't leave, a mob is fighting you!");
                     }
-                    else if (currentRoom.neighbourLeft != null)
+                    else if (currentRoom.neighbourWest != null)
                     {
-                        currentRoom = currentRoom.neighbourLeft;
-                        currentRoom.ShowDescription();
+                        changeRoom(currentRoom.neighbourWest);
                     }
                     else
-                        Console.WriteLine("No rooms to the left!");
+                        Console.WriteLine("No rooms to the west!");
                 }
+                // Looking for help
                 else if (command.Equals("help"))
                 {
                     Console.WriteLine(Text.HelpText);
                 }
-                else if (command.Equals("quit"))
-                {
-                    break;
-                }
+                // Fight
                 else if (command.Equals("fight"))
                 {
                     while (troll.life > 0 && player1.life > 0)
@@ -125,10 +121,11 @@ namespace Moria
                     {
                         Console.WriteLine("You are victorious and the troll is dead");
                         currentRoom.status = "treasure";
-                        leftLeftRoom.description = "The far left room, there is a dead troll on the floor";
+                        mobRoom.description = Text.DeadTrollDescription;
                     }
                     
                 }
+                // Search the room
                 else if (command.Equals("search"))
                 {
                     Console.WriteLine("You search the room");
@@ -139,38 +136,45 @@ namespace Moria
                         string answer = Console.ReadLine().ToLower();
                         if (answer == "yes")
                         {
-                            currentRoom.collectedItem = true;
+                            player1.itemList.Add(currentRoom.item);
                             Console.WriteLine("You picked up {0}", currentRoom.item.name);
                             currentRoom.item = null;
                         }
-                    }
-                    else if (currentRoom.status == "treasure")
+                    } else
                     {
-                        Console.WriteLine("You have found the treasure!");
+                        Console.WriteLine("You find no items");
                     }
-                    else
+
+                    if (currentRoom.goldAmount > 0)
                     {
-                        Console.WriteLine("You find nothing");
+                        Console.WriteLine("You pick up {0} gold pieces", currentRoom.goldAmount);
+                        player1.gold += currentRoom.goldAmount;
+                        currentRoom.goldAmount = 0;
                     }
                 }
+                else if (command.Equals("inventory"))
+                {
+                    Console.WriteLine("You have picked up the following items :");
+                    foreach (Item i in player1.itemList)
+                    {
+                        Console.WriteLine(i.name);
+                    }
+                    Console.WriteLine("and {0} pieces of gold", player1.gold);
+                }
+                // Quit the game
+                else if (command.Equals("quit"))
+                {
+                    break;
+                }
+                // Unknown command
                 else
                 {
                     Console.WriteLine("I don't understand!");
                 }
 
-                if (currentRoom.status == "trap")
-                {
-                    player1.life -= 80;
-                    if (player1.life <= 0)
-                    {
-                        Console.WriteLine("You have died from the trap");
-                        Console.WriteLine("The game is over");
-                        break;
-                    }
-                    currentRoom.status = "";
-                }
+               
 
-                if (leftRoom.collectedItem && player1.life < 100)
+                if (player1.HasItem(healthPotion) && player1.life < 100)
                 {
                     Console.WriteLine("You have lost health and you have a health potion");
                     Console.WriteLine("Do you wish to use it?");
@@ -178,42 +182,66 @@ namespace Moria
                     if (answer == "yes")
                     {
                         player1.life = 100;
-                        leftRoom.collectedItem = false;
+                        player1.UseItem(healthPotion);
                     }
                     
+                }
+
+                if (player1.HasItem(key))
+                {
+                    startingRoom.description = Text.startingRoomItemCollected;
                 }
             }
         }
 
         private void CreateRelations()
         {
-            middleRoom.neighbourLeft = leftRoom;
-            middleRoom.neighbourRight = rightRoom;
-            leftRoom.neighbourRight = middleRoom;
-            leftRoom.neighbourLeft = leftLeftRoom;
-            rightRoom.neighbourLeft = middleRoom;
-            rightRoom.neighbourRight = rightRightRoom;
-            leftLeftRoom.neighbourRight = leftRoom;
-            rightRightRoom.neighbourLeft = rightRoom;
+            startingRoom.neighbourWest = potionRoom;
+            startingRoom.neighbourEast = bedRoom;
+            potionRoom.neighbourEast = startingRoom;
+            potionRoom.neighbourWest = mobRoom;
+            bedRoom.neighbourWest = startingRoom;
+            bedRoom.neighbourEast = trapRoom;
+            mobRoom.neighbourEast = potionRoom;
+            trapRoom.neighbourWest = bedRoom;
 
         }
 
-        public void InstantiateObjects()
+        private void changeRoom(Room neighbour)
         {
-            player1 = new Player("HH", 100);
+            currentRoom = neighbour;
+            Console.Clear();
+            Console.WriteLine(Text.Splash);
+            currentRoom.ShowDescription();
+        }
+
+        public void InstantiateObjects(string playerName)
+        {
+            player1 = new Player(playerName, 100);
+
             troll = new Mob("Troll", 50);
-            item1 = new Item("a key");
-            item2 = new Item("a health potion");
-            middleRoom = new Room("Middle", Text.MiddleRoomDescription);
-            middleRoom.item = item1;
-            leftRoom = new Room("Left", Text.LeftRoomDescription);
-            leftRoom.item = item2;
-            leftRoom.status = "LockedLeft";
-            rightRoom = new Room("Right", Text.RightRoomDescription);
-            leftLeftRoom = new Room("Far Left", Text.LeftLeftRoomDescription);
-            leftLeftRoom.status = "mob";
-            rightRightRoom = new Room("Far Right", Text.RightRightRoomDescription);
-            rightRightRoom.status = "trap";
+
+            key = new Item("a key");
+            healthPotion = new Item("a health potion");
+            
+
+            startingRoom = new Room("Entrance", Text.startingRoomDescription);
+            startingRoom.item = key;
+
+            potionRoom = new Room("Left", Text.LeftRoomDescription);
+            potionRoom.item = healthPotion;
+            potionRoom.status = "LockedWest";
+            potionRoom.goldAmount = 10;
+
+            bedRoom = new Room("Right", Text.RightRoomDescription);
+            bedRoom.goldAmount = 20;
+
+            mobRoom = new Room("Far Left", Text.LeftLeftRoomDescription);
+            mobRoom.status = "mob";
+            mobRoom.goldAmount = 500;
+
+            trapRoom = new Room("Far Right", Text.RightRightRoomDescription);
+            trapRoom.status = "trap";
 
         }
     }
